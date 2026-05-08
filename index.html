@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>algoritmo cohen-sutherland - taller 3.1</title>
+    <style>
+        body { font-family: sans-serif; display: flex; padding: 20px; }
+        canvas { border: 1px solid #ccc; margin-right: 20px; }
+        .panel { display: flex; flex-direction: column; gap: 15px; }
+        .controles-ventana input { width: 50px; margin-right: 10px; }
+    </style>
+</head>
+<body>
+
+    <canvas id="micanvas" width="500" height="400"></canvas>
+
+    <div class="panel">
+        <div class="controles-ventana">
+            <h3>ventana de recorte</h3>
+            <label>x1 <input type="number" id="inxmin" value="100"></label>
+            <label>y1 <input type="number" id="inymin" value="100"></label><br><br>
+            <label>x2 <input type="number" id="inxmax" value="400"></label>
+            <label>y2 <input type="number" id="inymax" value="300"></label><br><br>
+            <button id="btnactualizar">actualizar</button>
+        </div>
+
+        <div class="navegacion">
+            <button id="btninicio">|&lt;</button>
+            <button id="btnatras">&lt;</button>
+            <button id="btnsiguiente">&gt;</button>
+            <button id="btnfin">&gt;|</button>
+        </div>
+
+        <div class="info-texto">
+            <p><strong>linea:</strong></p>
+            <p id="txtp1">p1: </p>
+            <p id="txtp2">p2: </p>
+            <br>
+            <p><strong>recorte:</strong></p>
+            <p id="txtpc1">pc1: </p>
+            <p id="txtpc2">pc2: </p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

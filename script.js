@@ -59,41 +59,72 @@ function dibujarlinea(contexto, x1, y1, x2, y2, color) {
 }
 
 /**
- * nueva funcion: procesarrecorte (fase 2)
- * evalua aceptacion o rechazo trivial usando bits
+ * funcion: procesarrecorte (fase 3: adicion de formulas de interseccion)
  */
 function procesarrecorte(x1, y1, x2, y2) {
     let c1 = calcularcodigo(x1, y1);
     let c2 = calcularcodigo(x2, y2);
-    
-    // aceptacion trivial: ambos puntos adentro (0000 | 0000 = 0)
-    if ((c1 | c2) === 0) {
-        return { estado: "aceptada", p1: {x: x1, y: y1}, p2: {x: x2, y: y2} };
-    }
-    
-    // rechazo trivial: comparten una region externa (ej: ambos a la izquierda)
-    if ((c1 & c2) !== 0) {
-        return { estado: "rechazada", p1: null, p2: null };
+    let aceptada = false;
+
+    // ciclo para evaluar y recortar la linea contra los bordes
+    while (true) {
+        if ((c1 | c2) === 0) {
+            aceptada = true;
+            break;
+        } else if ((c1 & c2) !== 0) {
+            break;
+        } else {
+            let x, y;
+            let c_fuera = c1 !== 0 ? c1 : c2;
+
+            // formulas de interseccion de cohen-sutherland
+            if (c_fuera & arriba) {
+                x = x1 + (x2 - x1) * (ymin - y1) / (y2 - y1);
+                y = ymin;
+            } else if (c_fuera & abajo) {
+                x = x1 + (x2 - x1) * (ymax - y1) / (y2 - y1);
+                y = ymax;
+            } else if (c_fuera & derecha) {
+                y = y1 + (y2 - y1) * (xmax - x1) / (x2 - x1);
+                x = xmax;
+            } else if (c_fuera & izquierda) {
+                y = y1 + (y2 - y1) * (xmin - x1) / (x2 - x1);
+                x = xmin;
+            }
+
+            // actualizamos la coordenada del punto que estaba afuera
+            if (c_fuera === c1) {
+                x1 = x;
+                y1 = y;
+                c1 = calcularcodigo(x1, y1);
+            } else {
+                x2 = x;
+                y2 = y;
+                c2 = calcularcodigo(x2, y2);
+            }
+        }
     }
 
-    // si llega aqui, requiere recorte (lo haremos en el siguiente commit)
-    return { estado: "requiere recorte", p1: {x: x1, y: y1}, p2: {x: x2, y: y2} };
+    if (aceptada) {
+        return { estado: "recortada", p1: {x: x1, y: y1}, p2: {x: x2, y: y2} };
+    } else {
+        return { estado: "rechazada", p1: null, p2: null };
+    }
 }
 
 function refrescar() {
     dibujarventana(ctx, xmin, ymin, xmax, ymax);
     
-    let l = lineas[indice];
-    dibujartrazado(ctx, l.p1.x, l.p1.y, l.p2.x, l.p2.y, "#cccccc");
+    let l = lineas[indiceactual];
+    dibujarlinea(ctx, l.p1.x, l.p1.y, l.p2.x, l.p2.y, "#cccccc");
     
-    // llamar a la nueva logica de evaluacion
     let resultado = procesarrecorte(l.p1.x, l.p1.y, l.p2.x, l.p2.y);
 
-    // si es aceptada, dibujamos la linea final en rojo sobre la gris
-    if (resultado.estado === "aceptada") {
-        dibujartrazado(ctx, resultado.p1.x, resultado.p1.y, resultado.p2.x, resultado.p2.y, "red");
-        document.getElementById("txtpc1").innertext = "pc1: (" + resultado.p1.x + ", " + resultado.p1.y + ")";
-        document.getElementById("txtpc2").innertext = "pc2: (" + resultado.p2.x + ", " + resultado.p2.y + ")";
+    if (resultado.estado === "recortada" || resultado.estado === "aceptada") {
+        dibujarlinea(ctx, resultado.p1.x, resultado.p1.y, resultado.p2.x, resultado.p2.y, "red");
+        // usamos parseint para redondear y no alterar mayusculas
+        document.getElementById("txtpc1").innertext = "pc1: (" + parseint(resultado.p1.x) + ", " + parseint(resultado.p1.y) + ")";
+        document.getElementById("txtpc2").innertext = "pc2: (" + parseint(resultado.p2.x) + ", " + parseint(resultado.p2.y) + ")";
     } else {
         document.getElementById("txtpc1").innertext = "pc1: " + resultado.estado;
         document.getElementById("txtpc2").innertext = "pc2: " + resultado.estado;

@@ -38,23 +38,23 @@ function calcularcodigo(x, y) {
 }
 
 function dibujarventana(contexto, x1, y1, x2, y2) {
-    contexto.clearrect(0, 0, canvas.width, canvas.height);
-    contexto.beginpath();
-    contexto.strokestyle = "blue"; 
-    contexto.linewidth = 2;
-    contexto.strokerect(x1, y1, x2 - x1, y2 - y1);
+    contexto.clearRect(0, 0, canvas.width, canvas.height);
+    contexto.beginPath();
+    contexto.strokeStyle = "blue"; 
+    contexto.lineWidth = 2;
+    contexto.strokeRect(x1, y1, x2 - x1, y2 - y1);
     contexto.stroke();
     return "ventana dibujada"; 
 }
 
 function dibujarlinea(contexto, x1, y1, x2, y2, color) {
-    contexto.beginpath();
-    contexto.strokestyle = color;
-    contexto.linewidth = 2;
-    contexto.moveto(x1, y1);
-    contexto.lineto(x2, y2);
+    contexto.beginPath();
+    contexto.strokeStyle = color;
+    contexto.lineWidth = 2;
+    contexto.moveTo(x1, y1);
+    contexto.lineTo(x2, y2);
     contexto.stroke();
-    contexto.closepath();
+    contexto.closePath();
     return "linea dibujada";
 }
 
@@ -115,7 +115,7 @@ function procesarrecorte(x1, y1, x2, y2) {
 function refrescar() {
     dibujarventana(ctx, xmin, ymin, xmax, ymax);
     
-    let l = lineas[indiceactual];
+    let l = lineasprueba[indiceactual];
     dibujarlinea(ctx, l.p1.x, l.p1.y, l.p2.x, l.p2.y, "#cccccc");
     
     let resultado = procesarrecorte(l.p1.x, l.p1.y, l.p2.x, l.p2.y);
@@ -123,27 +123,27 @@ function refrescar() {
     if (resultado.estado === "recortada" || resultado.estado === "aceptada") {
         dibujarlinea(ctx, resultado.p1.x, resultado.p1.y, resultado.p2.x, resultado.p2.y, "red");
         // usamos parseint para redondear y no alterar mayusculas
-        document.getElementById("txtpc1").innertext = "pc1: (" + parseint(resultado.p1.x) + ", " + parseint(resultado.p1.y) + ")";
-        document.getElementById("txtpc2").innertext = "pc2: (" + parseint(resultado.p2.x) + ", " + parseint(resultado.p2.y) + ")";
+        document.getElementById("txtpc1").innerText = "pc1: (" + parseInt(resultado.p1.x) + ", " + parseInt(resultado.p1.y) + ")";
+        document.getElementById("txtpc2").innerText = "pc2: (" + parseInt(resultado.p2.x) + ", " + parseInt(resultado.p2.y) + ")";
     } else {
-        document.getElementById("txtpc1").innertext = "pc1: " + resultado.estado;
-        document.getElementById("txtpc2").innertext = "pc2: " + resultado.estado;
+        document.getElementById("txtpc1").innerText = "pc1: " + resultado.estado;
+        document.getElementById("txtpc2").innerText = "pc2: " + resultado.estado;
     }
     
-    document.getElementById("txtp1").innertext = "p1: (" + l.p1.x + ", " + l.p1.y + ")";
-    document.getElementById("txtp2").innertext = "p2: (" + l.p2.x + ", " + l.p2.y + ")";
+    document.getElementById("txtp1").innerText = "p1: (" + l.p1.x + ", " + l.p1.y + ")";
+    document.getElementById("txtp2").innerText = "p2: (" + l.p2.x + ", " + l.p2.y + ")";
 }
 
-document.getElementById("btninicio").onclick = function() { indice = 0; refrescar(); };
-document.getElementById("btnfin").onclick = function() { indice = 4; refrescar(); };
-document.getElementById("btnatras").onclick = function() { if(indice > 0) indice--; refrescar(); };
-document.getElementById("btnsiguiente").onclick = function() { if(indice < 4) indice++; refrescar(); };
+document.getElementById("btninicio").onclick = function() { indiceactual = 0; refrescar(); };
+document.getElementById("btnfin").onclick = function() { indiceactual = 4; refrescar(); };
+document.getElementById("btnatras").onclick = function() { if(indiceactual > 0) indiceactual--; refrescar(); };
+document.getElementById("btnsiguiente").onclick = function() { if(indiceactual < 4) indiceactual++; refrescar(); };
 
 document.getElementById("btnactualizar").onclick = function() {
-    xmin = parseint(document.getElementById("inxmin").value);
-    ymin = parseint(document.getElementById("inymin").value);
-    xmax = parseint(document.getElementById("inxmax").value);
-    ymax = parseint(document.getElementById("inymax").value);
+    xmin = parseInt(document.getElementById("inxmin").value);
+    ymin = parseInt(document.getElementById("inymin").value);
+    xmax = parseInt(document.getElementById("inxmax").value);
+    ymax = parseInt(document.getElementById("inymax").value);
     refrescar();
 };
 

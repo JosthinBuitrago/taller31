@@ -58,15 +58,11 @@ function dibujarlinea(contexto, x1, y1, x2, y2, color) {
     return "linea dibujada";
 }
 
-/**
-* funcion: procesarrecorte (fase 3: adicion de formulas de interseccion)
-*/
 function procesarrecorte(x1, y1, x2, y2) {
     let c1 = calcularcodigo(x1, y1);
     let c2 = calcularcodigo(x2, y2);
     let aceptada = false;
 
-    // ciclo para evaluar y recortar la linea contra los bordes
     while (true) {
         if ((c1 | c2) === 0) {
             aceptada = true;
@@ -77,7 +73,6 @@ function procesarrecorte(x1, y1, x2, y2) {
             let x, y;
             let c_fuera = c1 !== 0 ? c1 : c2;
 
-            // formulas de interseccion de cohen-sutherland
             if (c_fuera & arriba) {
                 x = x1 + (x2 - x1) * (ymin - y1) / (y2 - y1);
                 y = ymin;
@@ -92,7 +87,6 @@ function procesarrecorte(x1, y1, x2, y2) {
                 x = xmin;
             }
             
-            // actualizamos la coordenada del punto que estaba afuera
             if (c_fuera === c1) {
                 x1 = x;
                 y1 = y;
@@ -122,7 +116,6 @@ function refrescar() {
 
     if (resultado.estado === "recortada" || resultado.estado === "aceptada") {
         dibujarlinea(ctx, resultado.p1.x, resultado.p1.y, resultado.p2.x, resultado.p2.y, "red");
-        // usamos parseint para redondear y no alterar mayusculas
         document.getElementById("txtpc1").innerText = "pc1: (" + parseInt(resultado.p1.x) + ", " + parseInt(resultado.p1.y) + ")";
         document.getElementById("txtpc2").innerText = "pc2: (" + parseInt(resultado.p2.x) + ", " + parseInt(resultado.p2.y) + ")";
     } else {
